@@ -4,7 +4,7 @@
 #
 Name     : the_silver_searcher
 Version  : 2.2.0
-Release  : 1
+Release  : 3
 URL      : https://github.com/ggreer/the_silver_searcher/archive/2.2.0.tar.gz
 Source0  : https://github.com/ggreer/the_silver_searcher/archive/2.2.0.tar.gz
 Summary  : No detailed summary available
@@ -12,6 +12,7 @@ Group    : Development/Tools
 License  : Apache-2.0
 Requires: the_silver_searcher-bin = %{version}-%{release}
 Requires: the_silver_searcher-data = %{version}-%{release}
+Requires: the_silver_searcher-license = %{version}-%{release}
 Requires: the_silver_searcher-man = %{version}-%{release}
 BuildRequires : grep
 BuildRequires : pkgconfig(liblzma)
@@ -26,6 +27,7 @@ A code searching tool similar to `ack`, with a focus on speed.
 Summary: bin components for the the_silver_searcher package.
 Group: Binaries
 Requires: the_silver_searcher-data = %{version}-%{release}
+Requires: the_silver_searcher-license = %{version}-%{release}
 
 %description bin
 bin components for the the_silver_searcher package.
@@ -37,6 +39,14 @@ Group: Data
 
 %description data
 data components for the the_silver_searcher package.
+
+
+%package license
+Summary: license components for the the_silver_searcher package.
+Group: Default
+
+%description license
+license components for the the_silver_searcher package.
 
 
 %package man
@@ -55,7 +65,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1569957353
+export SOURCE_DATE_EPOCH=1569961269
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -75,9 +85,15 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1569957353
+export SOURCE_DATE_EPOCH=1569961269
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/package-licenses/the_silver_searcher
+cp LICENSE %{buildroot}/usr/share/package-licenses/the_silver_searcher/LICENSE
 %make_install
+## install_append content
+mkdir -p %{buildroot}/usr/share/bash-completion/completions
+mv %{buildroot}/usr/share/the_silver_searcher/completions/ag.bashcomp.sh %{buildroot}/usr/share/bash-completion/completions/ag
+## install_append end
 
 %files
 %defattr(-,root,root,-)
@@ -88,8 +104,12 @@ rm -rf %{buildroot}
 
 %files data
 %defattr(-,root,root,-)
-/usr/share/the_silver_searcher/completions/ag.bashcomp.sh
+/usr/share/bash-completion/completions/ag
 /usr/share/zsh/site-functions/_the_silver_searcher
+
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/the_silver_searcher/LICENSE
 
 %files man
 %defattr(0644,root,root,0755)
