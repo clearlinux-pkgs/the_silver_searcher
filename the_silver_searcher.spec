@@ -4,7 +4,7 @@
 #
 Name     : the_silver_searcher
 Version  : 2.2.0
-Release  : 3
+Release  : 4
 URL      : https://github.com/ggreer/the_silver_searcher/archive/2.2.0.tar.gz
 Source0  : https://github.com/ggreer/the_silver_searcher/archive/2.2.0.tar.gz
 Summary  : No detailed summary available
@@ -18,6 +18,7 @@ BuildRequires : grep
 BuildRequires : pkgconfig(liblzma)
 BuildRequires : pkgconfig(libpcre)
 BuildRequires : pkgconfig(zlib)
+Patch1: 0001-Fix-build-with-GCC-10.patch
 
 %description
 # The Silver Searcher
@@ -59,20 +60,22 @@ man components for the the_silver_searcher package.
 
 %prep
 %setup -q -n the_silver_searcher-2.2.0
+cd %{_builddir}/the_silver_searcher-2.2.0
+%patch1 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1569961269
+export SOURCE_DATE_EPOCH=1592847430
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
 export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 %autogen --disable-static
 make  %{?_smp_mflags}
@@ -85,10 +88,10 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1569961269
+export SOURCE_DATE_EPOCH=1592847430
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/the_silver_searcher
-cp LICENSE %{buildroot}/usr/share/package-licenses/the_silver_searcher/LICENSE
+cp %{_builddir}/the_silver_searcher-2.2.0/LICENSE %{buildroot}/usr/share/package-licenses/the_silver_searcher/2b8b815229aa8a61e483fb4ba0588b8b6c491890
 %make_install
 ## install_append content
 mkdir -p %{buildroot}/usr/share/bash-completion/completions
@@ -109,7 +112,7 @@ mv %{buildroot}/usr/share/the_silver_searcher/completions/ag.bashcomp.sh %{build
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/the_silver_searcher/LICENSE
+/usr/share/package-licenses/the_silver_searcher/2b8b815229aa8a61e483fb4ba0588b8b6c491890
 
 %files man
 %defattr(0644,root,root,0755)
